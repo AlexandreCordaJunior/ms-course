@@ -5,7 +5,10 @@ import java.util.List;
 import com.ale.hrworker.domain.Worker;
 import com.ale.hrworker.service.WorkerService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/workers")
 public class WorkerResouce {
-    
+
+    private final WorkerService service;
+
+    private final Environment env;
+
+    private static Logger logger = LoggerFactory.getLogger(WorkerResouce.class);
+
     @Autowired
-    private WorkerService service;
+    public WorkerResouce(WorkerService service, Environment env) {
+        this.service = service;
+        this.env = env;
+    }
 
     @GetMapping
     public ResponseEntity<List<Worker>> getAll() {
@@ -26,6 +38,7 @@ public class WorkerResouce {
 
     @GetMapping("/{id}")
     public ResponseEntity<Worker> getById(@PathVariable Long id) {
+        logger.info("PORT - " + env.getProperty("local.server.port"));
         Worker worker = service.getById(id);
         if(worker == null) {
             return ResponseEntity.notFound().build();
