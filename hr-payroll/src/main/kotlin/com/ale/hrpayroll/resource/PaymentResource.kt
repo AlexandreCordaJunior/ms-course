@@ -15,6 +15,10 @@ class PaymentResource @Autowired constructor(private val service: PaymentService
     @GetMapping("/{workerId}/days/{days}")
     fun getPayment(@PathVariable workerId: Long, @PathVariable days: Int): ResponseEntity<Payment> {
         val payment = service.getPayment(workerId, days)
-        return ResponseEntity.ok(payment)
+        return if(payment != null) {
+            ResponseEntity.ok(payment)
+        } else {
+            ResponseEntity.notFound().build()
+        }
     }
 }
